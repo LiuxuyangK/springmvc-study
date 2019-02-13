@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-3.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<context:component-scan base-package="com.springmvc.lxy"/>
+
+	<aop:aspectj-autoproxy/>
+
+	<!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"/>
+		<!-- 指定所上传文件的总大小不能超过10M。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+		<property name="maxUploadSize" value="10000000"/>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	  <property name="locations">
+	  	<list>
+	    	<value>classpath:common.properties</value>
+	    </list>
+	  </property>
+	  <property name="fileEncoding" value="UTF-8" />
+	  <property name="ignoreResourceNotFound" value="false"/>
+	</bean>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean id="stringHttpMessageConverter"
+				  class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!-- 如果不使用jackson可使用fastjson版本JSON转换器 -->
+			<bean id="mappingJacksonHttpMessageConverter"
+				  class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<!-- <bean class="com.threeStepTech.ObjectMapper.CustomObjectMapper"/> -->
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+					<!--<bean class="com.springmvc.lxy.framework.MyObjectMapper">-->
+						<property name="dateFormat">
+							<bean class="java.text.SimpleDateFormat">
+								<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+							</bean>
+						</property>
+						<property name="serializationInclusion">
+							<!-- 注入枚举类型,过滤不输出null -->
+							<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+						</property>
+					</bean>
+				</property>
+				<property name="supportedMediaTypes">
+					<list>
+						<!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+</beans>
+

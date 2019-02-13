@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_PATH">/Users/harry/personal/log/springmvcstudy</Property>
+        <Property name="FILE_NAME">app</Property>
+        <Property name="ERROR_FILE_NAME">error</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - [%X{requestId}] %msg%n"/>
+        </Console>
+
+        <!--所有日志 -->
+        <RollingRandomAccessFile name="RollingFile" fileName="${LOG_PATH}/${FILE_NAME}.log"
+                                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <!-- 日志级别过滤 -->
+            <ThresholdFilter level="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+            <!-- 日志输出的格式 -->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss:SSS} [%t] %-5level %logger{36} - [%X{requestId}] %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <!-- 日志文件超过1024M生成一个新的日志文件 -->
+                <SizeBasedTriggeringPolicy size="1024 MB" />
+            </Policies>
+            <!--最多保存的文件个数 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <!--错误日志 -->
+        <RollingRandomAccessFile name="ErrorFile" fileName="${LOG_PATH}/${ERROR_FILE_NAME}.log"
+                                 filePattern="${LOG_PATH}/$${date:yyyy-MM}/${ERROR_FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss:SSS} [%t] %-5level %logger{36} - [%X{requestId}] %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" />
+                <SizeBasedTriggeringPolicy size="1024 MB" />
+            </Policies>
+            <!--最多保存的文件个数 -->
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+        <Async name="Async">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="ErrorFile" />
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <!-- 这个logger会打印com.jiaobuchong包下的DEBUG日志 -->
+        <Logger name="com.jiaobuchong" level="DEBUG" additivity="false">
+            <AppenderRef ref="Async" />
+        </Logger>
+
+        <!--默认打印INFO级别的日志 -->
+        <Root level="INFO">
+            <AppenderRef ref="Async"/>
+        </Root>
+    </Loggers>
+</Configuration>
