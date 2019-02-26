@@ -46,24 +46,26 @@
 					</list>
 				</property>
 			</bean>
-			<!-- 如果不使用jackson可使用fastjson版本JSON转换器 -->
+
+
 			<bean id="mappingJacksonHttpMessageConverter"
 				  class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="objectMapper">
-					<!-- <bean class="com.threeStepTech.ObjectMapper.CustomObjectMapper"/> -->
-					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
-					<!--<bean class="com.springmvc.lxy.framework.MyObjectMapper">-->
-						<property name="dateFormat">
-							<bean class="java.text.SimpleDateFormat">
-								<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
-							</bean>
-						</property>
-						<property name="serializationInclusion">
-							<!-- 注入枚举类型,过滤不输出null -->
-							<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
-						</property>
-					</bean>
+					<bean class="com.springmvc.lxy.framework.MyObjectMapper"/>
+					<!--<bean class="com.fasterxml.jackson.databind.ObjectMapper">-->
+						<!--<property name="dateFormat">-->
+							<!--<bean class="java.text.SimpleDateFormat">-->
+								<!--<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>-->
+							<!--</bean>-->
+						<!--</property>-->
+						<!--<property name="serializationInclusion">-->
+							<!--&lt;!&ndash; 注入枚举类型,过滤不输出null &ndash;&gt;-->
+							<!--<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>-->
+						<!--</property>-->
+					<!--</bean>-->
 				</property>
+
+				<!--解决IE浏览器json文件下载和json数据中午乱码的问题-->
 				<property name="supportedMediaTypes">
 					<list>
 						<!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
@@ -72,6 +74,7 @@
 					</list>
 				</property>
 			</bean>
+
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 </beans>
